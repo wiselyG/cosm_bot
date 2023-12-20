@@ -32,10 +32,11 @@ program
 const mintInjs = async (url) => {
   const numpreloop = process.env.NUMPRELOOP || 5;
   const times = Math.floor(process.env.MINTNUM / numpreloop) || 2;
-  const amountBig = BigInt(process.env.AMOUNT);
+  const value=ethers.utils.formatEther(process.env.AMOUNT);
+  const amountBig = BigInt(value);
   const amount = {
     denom: 'inj',
-    amount: ethers.utils.formatEther(amountBig)
+    amount: amountBig
   }
   const rpcUrl = process.env.RPC_URL || url;
   const privateKey = PrivateKey.fromHex(pKey);
