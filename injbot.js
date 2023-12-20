@@ -13,7 +13,7 @@ const { program } = require('commander');
 
 
 /** MsgSend Example */
-const sendTask = async (sid,NetTag) => {
+const mintTask = async (sid,NetTag) => {
   const network = getNetworkInfo(NetTag);
   const privateKeyHash = process.env.PRIVATE_KEY;
   const privateKey = PrivateKey.fromHex(privateKeyHash)
@@ -39,16 +39,33 @@ const sendTask = async (sid,NetTag) => {
     dstInjectiveAddress: injectiveAddress,
   })
 
+ 
+  const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
+  const totalNum=Number(process.env.MINTNUM);
+  //这里开始循环调用
+  let index=0;
+  do {
+    try {
+      const hash = await sendTask(accountNumber,sid+index,msg,publicKey,network,privateKey);
+      console.log("success","index--",index,"hash:",hash);
+    } catch (error) {
+      console.log("failed index**",index);
+      console.error(error.stack);
+    }
+    index++;
+  } while (index<totalNum);
+  
+
+}
+
+const sendTask = async (accountNumber,sid,msg,publicKey,network,privateKey)=>{
   const gasplus = parseInt(process.env.GASPLUS);
   console.log("gasplus:",gasplus);
   const gasUpdate=Math.floor(Number(DEFAULT_STD_FEE.gas)*(1+gasplus/100));
   console.log("gasUpdate:",gasUpdate);
   DEFAULT_STD_FEE.gas=gasUpdate.toString();
   const sequence_id =sid;
-  const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
   console.log("sequence id:",sequence_id);
-  console.log("accountNum:",accountNumber);
-  console.log("default std fee:",DEFAULT_STD_FEE);
 
   /** Prepare the Transaction **/
   const { signBytes, txRaw } = createTransaction({
@@ -57,23 +74,14 @@ const sendTask = async (sid,NetTag) => {
     fee: DEFAULT_STD_FEE,
     pubKey: publicKey,
     sequence: sequence_id,
-    accountNumber: parseInt(
-      accountDetails.account.base_account.account_number,
-      10,
-    ),
+    accountNumber: accountNumber,
     chainId: network.chainId,
   })
 
-  /** Sign transaction */
   const signature = await privateKey.sign(Buffer.from(signBytes))
-
-  /** Append Signatures */
   txRaw.signatures = [signature]
-
   const Txhash=TxClient.hash(txRaw);
-  /** Calculate hash of the transaction */
   console.log(`Transaction Hash: ${Txhash}`)
-
   const txService = new TxGrpcClient(network.grpc)
 
   /** Simulate transaction */
@@ -87,7 +95,6 @@ const sendTask = async (sid,NetTag) => {
   /** Broadcast transaction */
   txService.broadcast(txRaw)
   return Txhash;
-
 }
 
 const viewSequence = async (NetTag)=>{
@@ -117,7 +124,7 @@ program
 .action((args,options)=>{
   const sid=parseInt(args);
   const netTag = options.main?Network.Mainnet:Network.Testnet;
-  sendTask(sid,netTag).then(result=>{
+  mintTask(sid,netTag).then(result=>{
     console.log("Hello world");
     console.log("Hash:",result);
   });
