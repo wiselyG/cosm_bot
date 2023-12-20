@@ -54,7 +54,7 @@ const Injwallet = async () => {
     // console.log("response code:", txResponse.code);
   } catch (error) {
     console.log("get a error");
-    console.log(error.message);
+    console.log(error.stack);
   }
 }
 
