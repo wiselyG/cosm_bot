@@ -37,7 +37,7 @@ const mintInjs = async (url) => {
   const value=ethers.utils.parseEther(process.env.AMOUNT);
   const amount = {
     denom: 'inj',
-    amount: value.toBigInt()
+    amount: value.toString()
   }
   const rpcUrl = process.env.RPC_URL || url;
   const privateKey = PrivateKey.fromHex(pKey);
