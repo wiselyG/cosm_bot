@@ -69,6 +69,7 @@ const sendTask = async (accountNumber, sid, msg, publicKey, network, privateKey)
         DEFAULT_STD_FEE.gas = gasUpdate.toString();
         const sequence_id = sid;
         console.log("sequence id:", sequence_id);
+        console.log("accountNumber-",accountNumber);
 
         /** Prepare the Transaction **/
         const { signBytes, txRaw } = createTransaction({
