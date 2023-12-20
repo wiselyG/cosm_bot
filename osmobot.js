@@ -8,7 +8,7 @@ const {
 const {
   Network, getNetworkInfo,
 } = require('@injectivelabs/networks');
-const { getStdFee,DEFAULT_STD_FEE,BigNumberInBase } = require('@injectivelabs/utils');
+const { getStdFee, DEFAULT_STD_FEE, BigNumberInBase } = require('@injectivelabs/utils');
 const { ethers } = require('ethers');
 
 const pKey = process.env.PRIVATE_KEY;
@@ -26,8 +26,8 @@ program
   .option('--main', "test model")
   .action((options) => {
     console.log(options.test);
-    const injnet = options.test ? getNetworkInfo(Network.Mainnet):getNetworkInfo(Network.Testnet);
-    console.log("rpc:",injnet);
+    const injnet = options.test ? getNetworkInfo(Network.Mainnet) : getNetworkInfo(Network.Testnet);
+    console.log("rpc:", injnet);
     mintInjs(injnet.rpc);
   })
 
@@ -57,6 +57,8 @@ const mintInjs = async (url) => {
         await sendTransaction(amount);
       }
       index++;
+      const balance = await client.getBalance(walletAddress, 'inj');
+      console.log("balance:", balance);
     } while (index < times);
   } catch (error) {
     console.log("get a Error");
@@ -67,27 +69,21 @@ const mintInjs = async (url) => {
 const sendTransaction = async (amount) => {
   return new Promise((resolve, reject) => {
     console.log("amount:", amount);
-    if(!client){
+    if (!client) {
       reject(new Error("client is not inited."))
     }
     setTimeout(() => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
-      client.getBalance(walletAddress, 'inj').then(result => {
-        console.log("balance:", ethers.utils.formatEther(result.amount));
-        resolve(result);
-      })
-      .catch(err => {
-        reject(err);
-      });
-      // const txResponse = await
-       client.sendTokens(walletAddress,receiveAddress,[amount],DEFAULT_STD_FEE,memo)
-       .then(result=>{
-        console.log(result);
-       });
+      client.sendTokens(walletAddress, receiveAddress, [amount], DEFAULT_STD_FEE, memo)
+        .then(result => {
+          console.log(result);
+          resolve(result);
+        })
+        .catch(err => reject(err));
       // console.log("response code:", txResponse.code);
 
-    }, 1100);
+    }, 400);
   });
 
 }
