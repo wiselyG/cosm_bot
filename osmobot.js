@@ -68,7 +68,7 @@ const sendTransaction = async (amount) => {
     setTimeout(() => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
-      client.getBalance(account.address, 'inj').then(result => {
+      client.getBalance(walletAddress, 'inj').then(result => {
         console.log("balance:", ethers.utils.formatEther(result.amount));
         resolve(result);
       })
