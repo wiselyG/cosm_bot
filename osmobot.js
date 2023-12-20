@@ -75,6 +75,7 @@ const sendTransaction = async (amount) => {
     setTimeout(() => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
+      console.log("memo:",memo);
       client.sendTokens(walletAddress, receiveAddress, [amount], DEFAULT_STD_FEE, memo)
         .then(result => {
           console.log(result);
