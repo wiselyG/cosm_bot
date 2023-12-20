@@ -13,13 +13,14 @@ const { program } = require('commander');
 
 
 /** MsgSend Example */
-const sendTask = async (sid) => {
-  const network = getNetworkInfo(Network.Testnet)
+const sendTask = async (sid,NetTag) => {
+  const network = getNetworkInfo(NetTag);
   const privateKeyHash = process.env.PRIVATE_KEY;
   const privateKey = PrivateKey.fromHex(privateKeyHash)
   const injectiveAddress = privateKey.toBech32()
   const publicKey = privateKey.toPublicKey().toBase64()
 
+  console.log("Env:",network.env);
   /** Account Details **/
   const accountDetails = await new ChainRestAuthApi(network.rest).fetchAccount(
     injectiveAddress,
@@ -27,7 +28,7 @@ const sendTask = async (sid) => {
 
   /** Prepare the Message */
   const amount = {
-    amount: new BigNumberInBase(0.015).toWei().toFixed(),
+    amount: new BigNumberInBase(0).toWei().toFixed(),
     denom: 'inj',
   }
 
@@ -37,6 +38,8 @@ const sendTask = async (sid) => {
     dstInjectiveAddress: injectiveAddress,
   })
 
+  const gasplus = parseInt(process.env.GASPLUS);
+  DEFAULT_STD_FEE.gas=Math.floor(Number(DEFAULT_STD_FEE.gas)*(1+gasplus/100));
   const sequence_id =sid;
   const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
   console.log("sequence id:",sequence_id);
@@ -90,9 +93,11 @@ program
 program
 .command("inj")
 .argument('<number>',"start sequence")
-.action((args)=>{
+.option('--main',"change to mainnet")
+.action((args,options)=>{
   const sid=parseInt(args);
-  sendTask(sid).then(result=>{
+  const netTag = options.main?Network.Mainnet:Network.Testnet;
+  sendTask(sid,netTag).then(result=>{
     console.log("Hello world");
     console.log("Hash:",result);
   });
