@@ -78,9 +78,7 @@ const sendTransaction = async (amount) => {
       })
       .catch(err => {
         reject(err);
-      })
-      const netInfo = client.getNetworkInfo(Network.Testnet);
-      console.log("netInfo:",netInfo);
+      });
       // const txResponse = await
        client.sendTokens(walletAddress,receiveAddress,[amount],DEFAULT_STD_FEE,memo)
        .then(result=>{
