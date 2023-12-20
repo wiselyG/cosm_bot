@@ -65,6 +65,9 @@ const mintInjs = async (url) => {
 const sendTransaction = async (amount) => {
   return new Promise((resolve, reject) => {
     console.log("amount:", amount);
+    if(!client){
+      reject(new Error("client is not inited."))
+    }
     setTimeout(() => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
