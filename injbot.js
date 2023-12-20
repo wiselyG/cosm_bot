@@ -106,7 +106,7 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
       .then(result=>{ resolve(result); })
       .catch(err=>reject(err))
 
-    }, 5000);
+    }, 3000);
   });
 
 }
@@ -123,7 +123,7 @@ const viewSequence = async (NetTag) => {
     injectiveAddress,
   )
   const sequence_now = parseInt(accountDetails.account.base_account.sequence, 10);
-  const nextSequence = sequence_now + 1;
+  const nextSequence = sequence_now;
   console.log("NextSequence:", nextSequence);
 }
 
