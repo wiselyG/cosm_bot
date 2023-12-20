@@ -33,11 +33,7 @@ const mintTask = async (sid, NetTag) => {
     denom: 'inj',
   }
 
-  const msg = MsgSend.fromJSON({
-    amount,
-    srcInjectiveAddress: injectiveAddress,
-    dstInjectiveAddress: injectiveAddress,
-  })
+ 
 
 
   const accountNumber = parseInt(accountDetails.account.base_account.account_number, 10,);
@@ -46,7 +42,7 @@ const mintTask = async (sid, NetTag) => {
   let index = 0;
   do {
     try {
-      const hash = await sendTask(accountNumber, sid + index, msg, publicKey, network, privateKey);
+      const hash = await sendTask(accountNumber, sid + index, publicKey, network, privateKey,amount,injectiveAddress);
       console.log("success", "index--", index, "hash:", hash);
     } catch (error) {
       console.log("failed index**", index);
@@ -58,10 +54,16 @@ const mintTask = async (sid, NetTag) => {
 
 }
 
-const sendTask = async (accountNumber, sid, msg, publicKey, network, privateKey) => {
+const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amount,injectiveAddress) => {
   return new Promise((resolve,reject) => {
     setTimeout(() => {
       const runone = async () => {
+        const msg = MsgSend.fromJSON({
+          amount,
+          srcInjectiveAddress: injectiveAddress,
+          dstInjectiveAddress: injectiveAddress,
+        })
+
         const gasplus = parseInt(process.env.GASPLUS);
         console.log("gasplus:", gasplus);
         const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.gas) * (1 + gasplus / 100));
