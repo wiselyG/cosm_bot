@@ -26,7 +26,8 @@ program
   .option('--test', "test model")
   .action((args, option) => {
     const rpc = option.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
-    mintInjs(rpc);
+    console.log("rpc:",rpc.rpc);
+    mintInjs(rpc.rpc);
   })
 
 const mintInjs = async (url) => {
