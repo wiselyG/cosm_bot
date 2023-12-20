@@ -8,7 +8,7 @@ const {
 const {
   Network, getNetworkInfo,
 } = require('@injectivelabs/networks');
-const { getStdFee,DEFAULT_STD_FEE } = require('@injectivelabs/utils');
+const { getStdFee,DEFAULT_STD_FEE,BigNumberInBase } = require('@injectivelabs/utils');
 const { ethers } = require('ethers');
 
 const pKey = process.env.PRIVATE_KEY;
@@ -34,10 +34,11 @@ program
 const mintInjs = async (url) => {
   const numpreloop = process.env.NUMPRELOOP || 5;
   const times = Math.floor(process.env.MINTNUM / numpreloop) || 2;
-  const value=ethers.utils.parseEther(process.env.AMOUNT);
+  // const value=ethers.utils.parseEther(process.env.AMOUNT);
+  const value = new BigNumberInBase(Number(process.env.AMOUNT)).toWei().toFixed();
   const amount = {
     denom: 'inj',
-    amount: value.toString()
+    amount: value
   }
   const rpcUrl = process.env.RPC_URL || url;
   const privateKey = PrivateKey.fromHex(pKey);
