@@ -50,11 +50,12 @@ const mintInjs = async (url) => {
       rpcUrl,
       wallet
     );
+    const [account] =await wallet.getAccounts();
     let index = 0;
     do {
       for (let n = 0; n < numpreloop; n++) {
         console.log("*", index, "-", n);
-        await sendTransaction(amount);
+        await sendTransaction(amount,account.address);
       }
       index++;
       const balance = await client.getBalance(walletAddress, 'inj');
@@ -66,7 +67,7 @@ const mintInjs = async (url) => {
   }
 }
 
-const sendTransaction = async (amount) => {
+const sendTransaction = async (amount,acctaddr) => {
   return new Promise((resolve, reject) => {
     console.log("amount:", amount);
     if (!client) {
@@ -76,7 +77,7 @@ const sendTransaction = async (amount) => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
       console.log("memo:",memo);
-      client.sendTokens(walletAddress, receiveAddress, [amount], DEFAULT_STD_FEE, memo)
+      client.sendTokens(acctaddr, receiveAddress, [amount], DEFAULT_STD_FEE, memo)
         .then(result => {
           console.log(result);
           resolve(result);
