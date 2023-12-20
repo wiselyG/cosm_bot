@@ -9,8 +9,13 @@ const {
   Network, getNetworkInfo,
 } = require('@injectivelabs/networks');
 const { getStdFee } = require('@injectivelabs/utils');
+const { ethers } = require('ethers');
 
 const pKey = process.env.PRIVATE_KEY;
+
+let wallet;
+let walletAddress;
+let client;
 
 program
   .name("Injective ins bot")
@@ -18,45 +23,63 @@ program
 
 program
   .command("hello")
-  .action(() => {
-    Injwallet();
+  .option('--test', "test model")
+  .action((args, option) => {
+    const rpc = option.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
+    mintInjs(rpc);
   })
 
-const Injwallet = async () => {
-  const network = getNetworkInfo(Network.Testnet);
-  const rpc_url = "https://testnet.sentry.tm.injective.network:443";
-  console.log("network-rpc:", network.rpc, " rest:", network.rest);
-  const privateKeyHash = pKey;
-  const privateKey = PrivateKey.fromHex(privateKeyHash);
-  const injectiveAddress = privateKey.toBech32();
-  console.log("inj wallet:", injectiveAddress);
-
-  const wallet = await InjectiveDirectEthSecp256k1Wallet.fromKey(Buffer.from(privateKeyHash, 'hex'));
-  const [account] = await wallet.getAccounts();
-  console.log("from:", account.address);
-
-
-  const receiveAddress = process.env.RECEIVE;
+const mintInjs = async (url) => {
+  const numpreloop = process.env.NUMPRELOOP || 5;
+  const times = Math.floor(process.env.MINTNUM / numpreloop) || 2;
   const amount = {
     denom: 'inj',
-    amount: '100000000'
-  };
-  const memo = "you memo words";
+    amount: ethers.utils.formatEther(process.env.AMOUNT)
+  }
+  const rpcUrl = process.env.RPC_URL || url;
+  const privateKey = PrivateKey.fromHex(pKey);
+  walletAddress = privateKey.toBech32();
+  console.log("start mint on wallet:", walletAddress);
   try {
-
-    const client = await InjectiveStargate.InjectiveSigningStargateClient.connectWithSigner(
-      rpc_url,
+    wallet = await InjectiveDirectEthSecp256k1Wallet.fromKey(Buffer.from(pKey, 'hex'));
+    client = await InjectiveStargate.InjectiveSigningStargateClient.connectWithSigner(
+      rpcUrl,
       wallet
     );
-    console.log(account.address);
-    const balance = await client.getBalance(account.address,'inj');
-    console.log(balance);
-    // const txResponse = await client.sendTokens(account.address,receiveAddress,[amount],getStdFee(),memo);
-    // console.log("response code:", txResponse.code);
+    let index = 0;
+    do {
+      for (let n = 0; n < numpreloop; n++) {
+        console.log("*", index, "-", n);
+        await sendTransaction(amount);
+      }
+      index++;
+    } while (index < times);
   } catch (error) {
-    console.log("get a error");
-    console.log(error.stack);
+    console.log("get a Error");
+    console.error(error.stack);
   }
+}
+
+const sendTransaction = async (amount) => {
+  return new Promise((resolve, reject) => {
+    console.log("amount:", amount);
+    setTimeout(() => {
+      const receiveAddress = process.env.RECEIVE;
+      const memo = process.env.MEMO;
+      client.getBalance(account.address, 'inj').then(result => {
+        console.log("balance:", ethers.utils.parseEther(result.amount));
+        resolve(result);
+      })
+      .catch(err => {
+        reject(err);
+      })
+
+      // const txResponse = await client.sendTokens(account.address,receiveAddress,[amount],getStdFee(),memo);
+      // console.log("response code:", txResponse.code);
+
+    }, 1100);
+  });
+
 }
 
 program.parse();
