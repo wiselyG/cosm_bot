@@ -39,7 +39,10 @@ const sendTask = async (sid,NetTag) => {
   })
 
   const gasplus = parseInt(process.env.GASPLUS);
-  DEFAULT_STD_FEE.gas=Math.floor(Number(DEFAULT_STD_FEE.gas)*(1+gasplus/100));
+  console.log("gasplus:",gasplus);
+  const gasUpdate=Math.floor(Number(DEFAULT_STD_FEE.gas)*(1+gasplus/100));
+  console.log("gasUpdate:",gasUpdate);
+  DEFAULT_STD_FEE.gas=gasUpdate.toString();
   const sequence_id =sid;
   const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
   console.log("sequence id:",sequence_id);
