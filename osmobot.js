@@ -23,7 +23,7 @@ program
   })
 
 const Injwallet = async () => {
-  const network = getNetworkInfo(Network.Mainnet);
+  const network = getNetworkInfo(Network.Testnet);
   const rpc_url = "https://testnet.sentry.tm.injective.network:443";
   console.log("network-rpc:", network.rpc, " rest:", network.rest);
   const privateKeyHash = pKey;
@@ -48,7 +48,8 @@ const Injwallet = async () => {
       rpc_url,
       wallet
     );
-    const balance = await client.getBalance(account.address);
+    console.log(account.address);
+    const balance = await client.getBalance(account.address,'inj');
     console.log(balance);
     // const txResponse = await client.sendTokens(account.address,receiveAddress,[amount],getStdFee(),memo);
     // console.log("response code:", txResponse.code);
