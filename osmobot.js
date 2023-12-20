@@ -32,11 +32,10 @@ program
 const mintInjs = async (url) => {
   const numpreloop = process.env.NUMPRELOOP || 5;
   const times = Math.floor(process.env.MINTNUM / numpreloop) || 2;
-  const value=ethers.utils.formatEther(process.env.AMOUNT);
-  const amountBig = BigInt(value);
+  const value=ethers.utils.parseEther(process.env.AMOUNT);
   const amount = {
     denom: 'inj',
-    amount: amountBig
+    amount: value.toBigInt()
   }
   const rpcUrl = process.env.RPC_URL || url;
   const privateKey = PrivateKey.fromHex(pKey);
@@ -69,7 +68,7 @@ const sendTransaction = async (amount) => {
       const receiveAddress = process.env.RECEIVE;
       const memo = process.env.MEMO;
       client.getBalance(account.address, 'inj').then(result => {
-        console.log("balance:", ethers.utils.parseEther(result.amount));
+        console.log("balance:", ethers.utils.formatEther(result.amount));
         resolve(result);
       })
       .catch(err => {
