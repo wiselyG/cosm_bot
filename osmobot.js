@@ -24,8 +24,9 @@ program
 program
   .command("hello")
   .option('--test', "test model")
-  .action((args, option) => {
-    const rpc = option.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
+  .action((args, options) => {
+    console.log(options);
+    const rpc = options.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
     console.log("rpc:",rpc.rpc);
     mintInjs(rpc.rpc);
   })
