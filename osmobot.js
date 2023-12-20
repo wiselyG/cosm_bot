@@ -24,7 +24,7 @@ program
 program
   .command("hello")
   .option('--test', "test model")
-  .action((args, options) => {
+  .action((options) => {
     console.log(options.test);
     const rpc = options.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
     console.log("rpc:",rpc.rpc);
