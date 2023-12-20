@@ -26,9 +26,10 @@ const sendTask = async (sid,NetTag) => {
     injectiveAddress,
   )
 
+  const tokenNum=Number(process.env.AMOUNT);
   /** Prepare the Message */
   const amount = {
-    amount: new BigNumberInBase(0).toWei().toFixed(),
+    amount: new BigNumberInBase(tokenNum).toWei().toFixed(),
     denom: 'inj',
   }
 
