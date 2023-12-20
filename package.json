@@ -1,0 +1,22 @@
+{
+  "name": "cosmosbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cosmjs/launchpad": "^0.27.1",
+    "@cosmjs/proto-signing": "^0.32.2",
+    "@cosmjs/stargate": "0.29.5",
+    "@injectivelabs/networks": "^1.14.4",
+    "@injectivelabs/sdk-ts": "^1.14.4",
+    "@injectivelabs/utils": "^1.14.4",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1"
+  }
+}
