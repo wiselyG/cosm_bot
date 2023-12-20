@@ -23,10 +23,10 @@ program
 
 program
   .command("hello")
-  .option('--test', "test model")
+  .option('--main', "test model")
   .action((options) => {
     console.log(options.test);
-    const rpc = options.test ? getNetworkInfo(Network.Testnet) : getNetworkInfo(Network.Mainnet);
+    const rpc = options.test ? getNetworkInfo(Network.Mainnet):getNetworkInfo(Network.Testnet);
     console.log("rpc:",rpc.rpc);
     mintInjs(rpc.rpc);
   })
@@ -80,7 +80,11 @@ const sendTransaction = async (amount) => {
         reject(err);
       })
 
-      // const txResponse = await client.sendTokens(account.address,receiveAddress,[amount],getStdFee(),memo);
+      // const txResponse = await
+       client.sendTokens(walletAddress,receiveAddress,[amount],getStdFee(),memo)
+       .then(result=>{
+        console.log(result);
+       });
       // console.log("response code:", txResponse.code);
 
     }, 1100);
