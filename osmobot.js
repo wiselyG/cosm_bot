@@ -8,7 +8,7 @@ const {
 const {
   Network, getNetworkInfo,
 } = require('@injectivelabs/networks');
-const { getStdFee } = require('@injectivelabs/utils');
+const { getStdFee,DEFAULT_STD_FEE } = require('@injectivelabs/utils');
 const { ethers } = require('ethers');
 
 const pKey = process.env.PRIVATE_KEY;
@@ -26,9 +26,9 @@ program
   .option('--main', "test model")
   .action((options) => {
     console.log(options.test);
-    const rpc = options.test ? getNetworkInfo(Network.Mainnet):getNetworkInfo(Network.Testnet);
-    console.log("rpc:",rpc.rpc);
-    mintInjs(rpc.rpc);
+    const injnet = options.test ? getNetworkInfo(Network.Mainnet):getNetworkInfo(Network.Testnet);
+    console.log("rpc:",injnet);
+    mintInjs(injnet.rpc);
   })
 
 const mintInjs = async (url) => {
@@ -79,9 +79,10 @@ const sendTransaction = async (amount) => {
       .catch(err => {
         reject(err);
       })
-
+      const netInfo = client.getNetworkInfo(Network.Testnet);
+      console.log("netInfo:",netInfo);
       // const txResponse = await
-       client.sendTokens(walletAddress,receiveAddress,[amount],getStdFee(),memo)
+       client.sendTokens(walletAddress,receiveAddress,[amount],DEFAULT_STD_FEE,memo)
        .then(result=>{
         console.log(result);
        });
