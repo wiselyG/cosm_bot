@@ -42,7 +42,7 @@ const startTask = async () => {
     memo: process.env.MEMO,
     fee: DEFAULT_STD_FEE,
     pubKey: publicKey,
-    sequence: parseInt(accountDetails.account.base_account.sequence, 10)+1,
+    sequence: parseInt(accountDetails.account.base_account.sequence, 10),
     accountNumber: parseInt(
       accountDetails.account.base_account.account_number,
       10,
