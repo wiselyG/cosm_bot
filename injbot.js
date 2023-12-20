@@ -35,13 +35,18 @@ const sendTask = async () => {
     dstInjectiveAddress: injectiveAddress,
   })
 
+  const sequence_id =parseInt(accountDetails.account.base_account.sequence,10);
+  const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
+  console.log("sequence id:",sequence_id);
+  console.log("accountNum:",accountNumber);
+
   /** Prepare the Transaction **/
   const { signBytes, txRaw } = createTransaction({
     message: msg,
     memo: process.env.MEMO,
     fee: DEFAULT_STD_FEE,
     pubKey: publicKey,
-    sequence: parseInt(accountDetails.account.base_account.sequence, 10),
+    sequence: sequence_id+1,
     accountNumber: parseInt(
       accountDetails.account.base_account.account_number,
       10,
