@@ -13,7 +13,7 @@ const { program } = require('commander');
 
 
 /** MsgSend Example */
-const sendTask = async (sequence) => {
+const sendTask = async (sid) => {
   const network = getNetworkInfo(Network.Testnet)
   const privateKeyHash = process.env.PRIVATE_KEY;
   const privateKey = PrivateKey.fromHex(privateKeyHash)
@@ -37,7 +37,7 @@ const sendTask = async (sequence) => {
     dstInjectiveAddress: injectiveAddress,
   })
 
-  const sequence_id =sequence;
+  const sequence_id =sid;
   const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
   console.log("sequence id:",sequence_id);
   console.log("accountNum:",accountNumber);
@@ -87,16 +87,17 @@ program
 .name("mint injs bot")
 .version("0.0.2");
 
-program.action("inj")
+program
+.command("inj")
 .argument('<number>',"start sequence")
 .action((args)=>{
-  const sequence=parseInt(args);
-  sendTask(sequence);
+  const sid=parseInt(args);
+  sendTask(sid).then(result=>{
+    console.log("Hello world");
+    console.log("Hash:",result);
+  });
 })
 
-sendTask(sequence).then((result)=>{
-  console.log("Hello world");
-  console.log("Hash:",result);
-})
+
 program.parse();
 console.log("Hello injs");
