@@ -39,6 +39,7 @@ const sendTask = async () => {
   const accountNumber =parseInt(accountDetails.account.base_account.account_number,10,);
   console.log("sequence id:",sequence_id);
   console.log("accountNum:",accountNumber);
+  console.log("default std fee:",DEFAULT_STD_FEE);
 
   /** Prepare the Transaction **/
   const { signBytes, txRaw } = createTransaction({
@@ -60,8 +61,9 @@ const sendTask = async () => {
   /** Append Signatures */
   txRaw.signatures = [signature]
 
+  const Txhash=TxClient.hash(txRaw);
   /** Calculate hash of the transaction */
-  console.log(`Transaction Hash: ${TxClient.hash(txRaw)}`)
+  console.log(`Transaction Hash: ${Txhash}`)
 
   const txService = new TxGrpcClient(network.grpc)
 
@@ -74,18 +76,13 @@ const sendTask = async () => {
   )
 
   /** Broadcast transaction */
-  const txResponse = await txService.broadcast(txRaw)
+  txService.broadcast(txRaw)
+  return Txhash;
 
-  if (txResponse.code !== 0) {
-    console.log(`Transaction failed: ${txResponse.rawLog}`)
-  } else {
-    console.log(
-      `Broadcasted transaction hash: ${JSON.stringify(txResponse.txHash)}`,
-    )
-  }
 }
 
-sendTask().then(()=>{
+sendTask().then((result)=>{
   console.log("Hello world");
+  console.log("Hash:",result);
 })
 console.log("Hello injs");
