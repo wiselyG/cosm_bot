@@ -90,6 +90,22 @@ const sendTask = async (sid,NetTag) => {
 
 }
 
+const viewSequence = async (NetTag)=>{
+  const network = getNetworkInfo(NetTag);
+  const privateKeyHash = process.env.PRIVATE_KEY;
+  const privateKey = PrivateKey.fromHex(privateKeyHash)
+  const injectiveAddress = privateKey.toBech32()
+
+  console.log("Env:",network.env);
+  /** Account Details **/
+  const accountDetails = await new ChainRestAuthApi(network.rest).fetchAccount(
+    injectiveAddress,
+  )
+  const sequence_now = parseInt(accountDetails.account.base_account.sequence, 10);
+  const nextSequence=sequence_now+1;
+  console.log("NextSequence:",nextSequence);
+}
+
 program
 .name("mint injs bot")
 .version("0.0.2");
@@ -106,6 +122,14 @@ program
     console.log("Hash:",result);
   });
 })
+
+program
+.command("nonce")
+.option('--test',"show Testnet sequence")
+.action((options)=>{
+  const netTag = options.test? Network.Testnet:Network.Mainnet;
+  viewSequence(netTag);
+});
 
 
 program.parse();
