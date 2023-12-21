@@ -33,16 +33,24 @@ const mintTask = async (sid, NetTag) => {
     denom: 'inj',
   }
 
- 
+
 
 
   const accountNumber = parseInt(accountDetails.account.base_account.account_number, 10,);
   const totalNum = Number(process.env.MINTNUM);
+  const gasplus = parseInt(process.env.GASPLUS);
+  console.log("gasplus:", gasplus);
+  let gaslimit = gasplus > 9 ? 10 : gasplus;
+  const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.amount[0].amount) * gaslimit);
+  console.log("gasUpdate:", gasUpdate);
+  // DEFAULT_STD_FEE.gas = gasUpdate.toString();
+  DEFAULT_STD_FEE.amount[0].amount = gasUpdate.toString();
+
   //这里开始循环调用
   let index = 0;
   do {
     try {
-      const hash = await sendTask(accountNumber, sid + index, publicKey, network, privateKey,amount,injectiveAddress);
+      const hash = await sendTask(accountNumber, sid + index, publicKey, network, privateKey, amount, injectiveAddress);
       console.log("success", "index--", index, "hash:", hash);
     } catch (error) {
       console.log("failed index**", index);
@@ -50,11 +58,11 @@ const mintTask = async (sid, NetTag) => {
     }
     index++;
   } while (index < totalNum);
-  return "finish mint:"+index.toString();
+  return "finish mint:" + index.toString();
 }
 
-const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amount,injectiveAddress) => {
-  return new Promise((resolve,reject) => {
+const sendTask = async (accountNumber, sid, publicKey, network, privateKey, amount, injectiveAddress) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       const runone = async () => {
         const msg = MsgSend.fromJSON({
@@ -63,17 +71,11 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
           dstInjectiveAddress: injectiveAddress,
         })
 
-        const gasplus = parseInt(process.env.GASPLUS);
-        console.log("gasplus:", gasplus);
-        let gaslimit =gasplus>9?10:gasplus;
-        const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.amount[0].amount) * gaslimit);
-        console.log("gasUpdate:", gasUpdate);
-        // DEFAULT_STD_FEE.gas = gasUpdate.toString();
-        DEFAULT_STD_FEE.amount[0].amount = gasUpdate.toString();
-        console.log(DEFAULT_STD_FEE);
+
+        console.log("gas amount:",DEFAULT_STD_FEE.amount[0].amount);
         const sequence_id = sid;
         console.log("sequence id:", sequence_id);
-        console.log("accountNumber-",accountNumber);
+        console.log("accountNumber-", accountNumber);
 
         /** Prepare the Transaction **/
         const { signBytes, txRaw } = createTransaction({
@@ -105,8 +107,8 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
         return Txhash;
       }
       runone()
-      .then(result=>{ resolve(result); })
-      .catch(err=>reject(err))
+        .then(result => { resolve(result); })
+        .catch(err => reject(err))
 
     }, 2000);
   });
@@ -120,11 +122,11 @@ const viewSequence = async (NetTag) => {
   const injectiveAddress = privateKey.toBech32()
 
   console.log("Env:", network.env);
-  console.log("Rest rpc:",network.rest);
-  console.log("Rpc:",network.rpc);
+  console.log("Rest rpc:", network.rest);
+  console.log("Rpc:", network.rpc);
   /** Account Details **/
-  const Restrpc=process.env.REST_URL||network.rest;
-  console.log("Used rest:",Restrpc);
+  const Restrpc = process.env.REST_URL || network.rest;
+  console.log("Used rest:", Restrpc);
   const accountDetails = await new ChainRestAuthApi(Restrpc).fetchAccount(
     injectiveAddress,
   )
