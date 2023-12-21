@@ -65,9 +65,11 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
 
         const gasplus = parseInt(process.env.GASPLUS);
         console.log("gasplus:", gasplus);
-        const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.gas) * (1 + gasplus / 100));
+        let gaslimit =gasplus>9?10:gasplus;
+        const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.amount[0].amount) * gaslimit);
         console.log("gasUpdate:", gasUpdate);
         // DEFAULT_STD_FEE.gas = gasUpdate.toString();
+        DEFAULT_STD_FEE.amount[0].amount = gasUpdate.toString();
         console.log(DEFAULT_STD_FEE);
         const sequence_id = sid;
         console.log("sequence id:", sequence_id);
