@@ -108,7 +108,7 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
       .then(result=>{ resolve(result); })
       .catch(err=>reject(err))
 
-    }, 3000);
+    }, 2000);
   });
 
 }
