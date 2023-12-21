@@ -118,8 +118,12 @@ const viewSequence = async (NetTag) => {
   const injectiveAddress = privateKey.toBech32()
 
   console.log("Env:", network.env);
+  console.log("Rest rpc:",network.rest);
+  console.log("Rpc:",network.rpc);
   /** Account Details **/
-  const accountDetails = await new ChainRestAuthApi(network.rest).fetchAccount(
+  const Restrpc=process.env.REST_URL||network.rest;
+  console.log("Used rest:",Restrpc);
+  const accountDetails = await new ChainRestAuthApi(Restrpc).fetchAccount(
     injectiveAddress,
   )
   const sequence_now = parseInt(accountDetails.account.base_account.sequence, 10);
