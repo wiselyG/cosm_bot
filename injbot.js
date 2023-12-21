@@ -54,23 +54,21 @@ const mintTask = async (sid, NetTag) => {
   let indexSid=sid;
   do {
     try {
-      if(index !== 0 && index%2 == 0){
-        const sequence = await viewSequence(NetTag);
-        if(sequence !== (index+indexSid)){
-          totalNum=totalNum-index;
-          index=0;
-          indexSid = sequence;
-          console.log("change sequence from:",indexSid+index," to:",indexSid);
-        }else{
-          console.log("isOk");
-        }
-      }
       const hash = await sendTask(accountNumber, indexSid + index, publicKey, network, privateKey, amount, injectiveAddress);
       console.log("I:", index, "Hash:", hash);
     } catch (error) {
       failed++;
       console.log("**failed", index);
-      console.error(error.stack);
+      // console.error(error.stack);
+      console.log(typeof error.stack);
+      const errorlog=error.stack.toString();
+      if(errorlog.includes("account sequence mismatch")){
+        let start=errorlog.indexOf("expected")+"expected".length;
+        const seqStr = errorlog.substring(start);
+        totalNum-=index;
+        indexSid = parseInt(seqStr);
+        index=0;
+      }
     }
     index++;
   } while (index < totalNum);
