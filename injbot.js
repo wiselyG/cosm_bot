@@ -67,7 +67,7 @@ const mintTask = async (sid, NetTag) => {
         const seqStr = errorlog.substring(start);
         totalNum-=(index-1);
         indexSid = parseInt(seqStr);
-        index=0;
+        index=-1;
         console.log("change sequence to:",indexSid);
       }
     }
