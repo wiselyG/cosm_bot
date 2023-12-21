@@ -50,17 +50,19 @@ const mintTask = async (sid, NetTag) => {
 
   //这里开始循环调用
   let index = 0;
+  let failed=0;
   do {
     try {
       const hash = await sendTask(accountNumber, sid + index, publicKey, network, privateKey, amount, injectiveAddress);
-      console.log("success", "index--", index, "hash:", hash);
+      console.log("I:", index, "Hash:", hash);
     } catch (error) {
-      console.log("failed index**", index);
+      failed++;
+      console.log("**failed", index);
       console.error(error.stack);
     }
     index++;
   } while (index < totalNum);
-  return "finish mint:" + index.toString();
+  return "finish mint:" + index.toString()+" Failed:"+failed.toString();
 }
 
 const sendTask = async (accountNumber, sid, publicKey, network, privateKey, amount, injectiveAddress) => {
@@ -77,7 +79,6 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey, amou
         console.log("gas amount:",DEFAULT_STD_FEE.amount[0].amount);
         const sequence_id = sid;
         console.log("sequence id:", sequence_id);
-        console.log("accountNumber-", accountNumber);
 
         /** Prepare the Transaction **/
         const { signBytes, txRaw } = createTransaction({
@@ -93,16 +94,15 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey, amou
         const signature = await privateKey.sign(Buffer.from(signBytes))
         txRaw.signatures = [signature]
         const Txhash = TxClient.hash(txRaw);
-        console.log(`Transaction Hash: ${Txhash}`)
         const txService = new TxGrpcClient(network.grpc)
 
         /** Simulate transaction */
-        const simulationResponse = await txService.simulate(txRaw)
+        const simulationResponse = await txService.simulate(txRaw);
         console.log(
           `Transaction simulation response: ${JSON.stringify(
             simulationResponse.gasInfo,
           )}`,
-        )
+        );
 
         /** Broadcast transaction */
         txService.broadcast(txRaw)
