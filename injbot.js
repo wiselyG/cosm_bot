@@ -65,9 +65,10 @@ const mintTask = async (sid, NetTag) => {
       if(errorlog.includes("account sequence mismatch")){
         let start=errorlog.indexOf("expected")+"expected".length;
         const seqStr = errorlog.substring(start);
-        totalNum-=index;
+        totalNum-=(index-1);
         indexSid = parseInt(seqStr);
         index=0;
+        console.log("change sequence to:",indexSid);
       }
     }
     index++;
