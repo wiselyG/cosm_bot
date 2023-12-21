@@ -21,8 +21,10 @@ const mintTask = async (sid, NetTag) => {
   const publicKey = privateKey.toPublicKey().toBase64()
 
   console.log("Env:", network.env);
+  console.log("Rest rpc:",network.rest);
+  const restUsed=process.env.REST_URL||network.rest;
   /** Account Details **/
-  const accountDetails = await new ChainRestAuthApi(network.rest).fetchAccount(
+  const accountDetails = await new ChainRestAuthApi(restUsed).fetchAccount(
     injectiveAddress,
   )
 
