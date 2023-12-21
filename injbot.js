@@ -38,11 +38,8 @@ const mintTask = async (sid, NetTag) => {
     denom: 'inj',
   }
 
-
-
-
   const accountNumber = parseInt(accountDetails.account.base_account.account_number, 10,);
-  const totalNum = Number(process.env.MINTNUM);
+  let totalNum = Number(process.env.MINTNUM);
   const gasplus = parseInt(process.env.GASPLUS);
   console.log("gasplus:", gasplus);
   let gaslimit = gasplus > 9 ? 10 : gasplus;
@@ -54,9 +51,21 @@ const mintTask = async (sid, NetTag) => {
   //这里开始循环调用
   let index = 0;
   let failed=0;
+  let indexSid=sid;
   do {
     try {
-      const hash = await sendTask(accountNumber, sid + index, publicKey, network, privateKey, amount, injectiveAddress);
+      if(index !== 0 && index%2 == 0){
+        const sequence = await viewSequence(NetTag);
+        if(sequence !== (index+indexSid)){
+          totalNum=totalNum-index;
+          index=0;
+          indexSid = sequence;
+          console.log("change sequence from:",indexSid+index," to:",indexSid);
+        }else{
+          console.log("isOk");
+        }
+      }
+      const hash = await sendTask(accountNumber, indexSid + index, publicKey, network, privateKey, amount, injectiveAddress);
       console.log("I:", index, "Hash:", hash);
     } catch (error) {
       failed++;
@@ -115,7 +124,7 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey, amou
         .then(result => { resolve(result); })
         .catch(err => reject(err))
 
-    }, 2000);
+    }, 1800);
   });
 
 }
@@ -139,12 +148,7 @@ const viewSequence = async (NetTag) => {
     injectiveAddress,
   )
   const sequence_now = parseInt(accountDetails.account.base_account.sequence, 10);
-  console.log(accountDetails.account.base_account);
-  console.log("***************")
-  Object.getOwnPropertyNames(accountDetails).forEach((key)=>{
-    console.log("-",key,"#",accountDetails[key]);
-  });
-  console.log("NextSequence:", sequence_now);
+  return sequence_now;
 }
 
 program
@@ -168,7 +172,10 @@ program
   .option('--test', "show Testnet sequence")
   .action((options) => {
     const netTag = options.test ? Network.TestnetSentry : Network.MainnetSentry;
-    viewSequence(netTag);
+    viewSequence(netTag)
+    .then(result=>{
+      console.log("Nextsequence:",result);
+    })
   });
 
 
