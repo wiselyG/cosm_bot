@@ -141,7 +141,7 @@ program
   .option('--main', "change to mainnet")
   .action((args, options) => {
     const sid = parseInt(args);
-    const netTag = options.main ? Network.Mainnet : Network.Testnet;
+    const netTag = options.main ? Network.MainnetSentry : Network.TestnetSentry;
     mintTask(sid, netTag).then(result => {
       console.log(result);
     });
@@ -151,7 +151,7 @@ program
   .command("nonce")
   .option('--test', "show Testnet sequence")
   .action((options) => {
-    const netTag = options.test ? Network.Testnet : Network.Mainnet;
+    const netTag = options.test ? Network.TestnetSentry : Network.MainnetSentry;
     viewSequence(netTag);
   });
 
