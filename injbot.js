@@ -141,8 +141,8 @@ const viewSequence = async (NetTag) => {
   const sequence_now = parseInt(accountDetails.account.base_account.sequence, 10);
   console.log(accountDetails.account.base_account);
   console.log("***************")
-  Object.getOwnPropertyNames(accountDetails.account).forEach((key)=>{
-    console.log("-",key,"#",accountDetails.account[key]);
+  Object.getOwnPropertyNames(accountDetails).forEach((key)=>{
+    console.log("-",key,"#",accountDetails[key]);
   });
   console.log("NextSequence:", sequence_now);
 }
