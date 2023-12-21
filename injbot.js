@@ -22,7 +22,10 @@ const mintTask = async (sid, NetTag) => {
 
   console.log("Env:", network.env);
   console.log("Rest rpc:",network.rest);
-  const restUsed=process.env.REST_URL||network.rest;
+  let restUsed=process.env.REST_URL||network.rest;
+  if(NetTag == Network.TestnetSentry || NetTag == Network.Testnet){
+    restUsed= network.rest;
+  }
   /** Account Details **/
   const accountDetails = await new ChainRestAuthApi(restUsed).fetchAccount(
     injectiveAddress,
@@ -127,7 +130,10 @@ const viewSequence = async (NetTag) => {
   console.log("Rest rpc:", network.rest);
   console.log("Rpc:", network.rpc);
   /** Account Details **/
-  const Restrpc = process.env.REST_URL || network.rest;
+  let Restrpc = process.env.REST_URL || network.rest;
+  if(NetTag == Network.TestnetSentry || NetTag == Network.Testnet){
+    Restrpc = network.rest;
+  }
   console.log("Used rest:", Restrpc);
   const accountDetails = await new ChainRestAuthApi(Restrpc).fetchAccount(
     injectiveAddress,
