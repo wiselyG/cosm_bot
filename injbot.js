@@ -50,8 +50,7 @@ const mintTask = async (sid, NetTag) => {
     }
     index++;
   } while (index < totalNum);
-
-
+  return "finish mint:"+index.toString();
 }
 
 const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amount,injectiveAddress) => {
@@ -68,7 +67,8 @@ const sendTask = async (accountNumber, sid, publicKey, network, privateKey,amoun
         console.log("gasplus:", gasplus);
         const gasUpdate = Math.floor(Number(DEFAULT_STD_FEE.gas) * (1 + gasplus / 100));
         console.log("gasUpdate:", gasUpdate);
-        DEFAULT_STD_FEE.gas = gasUpdate.toString();
+        // DEFAULT_STD_FEE.gas = gasUpdate.toString();
+        console.log(DEFAULT_STD_FEE);
         const sequence_id = sid;
         console.log("sequence id:", sequence_id);
         console.log("accountNumber-",accountNumber);
@@ -139,8 +139,7 @@ program
     const sid = parseInt(args);
     const netTag = options.main ? Network.Mainnet : Network.Testnet;
     mintTask(sid, netTag).then(result => {
-      console.log("Hello world");
-      console.log("Hash:", result);
+      console.log(result);
     });
   })
 
